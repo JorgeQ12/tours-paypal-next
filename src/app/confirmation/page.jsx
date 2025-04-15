@@ -1,11 +1,15 @@
 "use client"
 import { useRouter } from "next/navigation"
-import { CheckCircle2, ArrowLeft } from "lucide-react"
+import { CheckCircle2, ArrowLeft, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState, useEffect } from "react"
+import InvoiceModal from "@/components/InvoiceModal"
 
 export default function ConfirmationPage() {
   const router = useRouter()
+  const [invoiceModalOpen, setInvoiceModalOpen] = useState(false)
+  const [orderDetails, setOrderDetails] = useState(null)
 
   // Generate a random order number
   const orderNumber = `ORD-${Math.floor(100000 + Math.random() * 900000)}`
@@ -21,6 +25,35 @@ export default function ConfirmationPage() {
   const returnToHome = () => {
     router.push("/")
   }
+  
+  // Recuperar los datos de la orden desde localStorage si existen
+  useEffect(() => {
+    const savedOrderDetails = localStorage.getItem("orderDetails")
+    if (savedOrderDetails) {
+      setOrderDetails(JSON.parse(savedOrderDetails))
+    } else {
+      // Si no hay datos reales, crear datos de ejemplo para la factura
+      setOrderDetails({
+        id: orderNumber,
+        value: "100.00",
+        date: orderDate,
+        customerName: "Cliente de Ejemplo",
+        customerEmail: "cliente@ejemplo.com",
+        customerPhone: "+34 600 000 000",
+        items: [
+          {
+            id: "demo-tour",
+            name: "Tour guiado del Museo del Prado",
+            price: 50,
+            quantity: 2,
+            date: new Date().toISOString(),
+            language: "Español",
+            time: "10:00"
+          }
+        ]
+      })
+    }
+  }, [orderNumber, orderDate])
 
   return (
     <div className="container mx-auto py-12 px-4">
@@ -38,11 +71,11 @@ export default function ConfirmationPage() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-muted-foreground">Número de pedido</p>
-              <p className="font-medium">{orderNumber}</p>
+              <p className="font-medium">{orderDetails?.id || orderNumber}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Fecha</p>
-              <p className="font-medium">{orderDate}</p>
+              <p className="font-medium">{orderDetails?.date || orderDate}</p>
             </div>
           </div>
 
@@ -59,10 +92,18 @@ export default function ConfirmationPage() {
             <p className="font-medium">PayPal</p>
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex flex-col space-y-4">
           <p className="text-sm text-muted-foreground">
             Recibirás tus entradas por correo electrónico. Por favor, muestra el código QR en la entrada del tour.
           </p>
+          
+          <Button 
+            onClick={() => setInvoiceModalOpen(true)}
+            className="flex items-center bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <FileText className="mr-2 h-4 w-4" />
+            Ver e imprimir factura
+          </Button>
         </CardFooter>
       </Card>
 
@@ -72,6 +113,15 @@ export default function ConfirmationPage() {
           Volver a la página principal
         </Button>
       </div>
+      
+      {/* Modal de Factura */}
+      {orderDetails && (
+        <InvoiceModal
+          isOpen={invoiceModalOpen}
+          onClose={() => setInvoiceModalOpen(false)}
+          orderDetails={orderDetails}
+        />
+      )}
     </div>
   )
 }
