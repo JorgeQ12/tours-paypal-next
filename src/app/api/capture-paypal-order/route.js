@@ -50,6 +50,8 @@ export async function POST(request) {
     
     console.log("Capture result:", result);
 
+    // mandar el resultado a wordpress
+
     // Extraer información del comprador
     const customerInfo = {
       name: result.payer?.name?.given_name + " " + result.payer?.name?.surname,
