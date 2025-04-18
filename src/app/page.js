@@ -1,10 +1,7 @@
-import TourBooking from "@/components/tour-booking"
+import SummaryPage from "@/app/summary/page"
 
 export default function Home() {
   return (
-    <main className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-6 text-center">Tour Ticket Booking</h1>
-      <TourBooking />
-    </main>
+    <SummaryPage/>
   )
 }
