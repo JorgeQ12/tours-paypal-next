@@ -207,7 +207,14 @@ export default function CheckoutPage() {
         <div className="bg-white rounded-lg p-8 max-w-md w-full shadow-xl">
           <h2 className="text-2xl font-bold mb-2">Pago Cancelado</h2>
           <p className="mb-4">Has cancelado el proceso de pago.</p>
-          <Button onClick={onClose}>Cerrar</Button>
+          <Button  onClick={() => {
+                  onClose();
+                  router.push(WEB_URL);
+                }}
+                className="bg-gray-800 text-white hover:bg-gray-400 focus:ring-2 focus:ring-offset-1 focus:ring-gray-700"
+          >
+            Cerrar
+          </Button>
         </div>
       </div>
     );
