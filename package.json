@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@paypal/checkout-server-sdk": "^1.0.3",
     "@paypal/paypal-server-sdk": "^1.0.0",
     "@paypal/react-paypal-js": "^8.8.2",
     "@radix-ui/react-label": "^2.1.2",
@@ -22,7 +23,7 @@
     "lucide-react": "^0.487.0",
     "next": "15.2.4",
     "react": "^19.0.0",
-    "react-day-picker": "^8.10.1",
+    "react-day-picker": "^9.6.7",
     "react-dom": "^19.0.0",
     "react-qr-code": "^2.0.15",
     "react-to-print": "^3.0.6",

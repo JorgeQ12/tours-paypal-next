@@ -1,82 +1,46 @@
-import { 
-  Client, 
-  Environment, 
-  OrdersController, 
-  LogLevel,
-  ApiError
-} from "@paypal/paypal-server-sdk";
+import paypal from "@paypal/checkout-server-sdk";
 import { NextResponse } from "next/server";
 
 const clientId = process.env.PAYPAL_CLIENT_ID;
 const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
-
-const client = new Client({
-  clientCredentialsAuthCredentials: {
-    oAuthClientId: clientId,
-    oAuthClientSecret: clientSecret,
-  },
-  timeout: 0,
-  environment: Environment.Sandbox,
-  logging: {
-    logLevel: LogLevel.Info,
-    logRequest: {
-      logBody: true,
-    },
-    logResponse: {
-      logHeaders: true,
-    },
-  },
-});
+const environment = new paypal.core.SandboxEnvironment(clientId, clientSecret);
+const client = new paypal.core.PayPalHttpClient(environment);
 
 export async function POST(request) {
-  try {
-    const data = await request.json();
-    const { orderID } = data;
-
-    console.log("Capturing order:", orderID);
-
+  try 
+  {
+    // Obtén el orderID del cuerpo
+    const { orderID } = await request.json();
     if (!orderID) {
       return NextResponse.json(
-        { error: "Se requiere ID de orden" },
+        { error: "Se requiere el parámetro orderID" },
         { status: 400 }
       );
     }
 
-    const ordersController = new OrdersController(client);
-    
-    // Capturar la orden - Asegurar que orderID sea una cadena
-    const orderId = String(orderID);
-    const { result, ...httpResponse } = await ordersController.captureOrder(orderId);
-    
-    console.log("Capture result:", result);
+    // Construye la petición de captura
+    const captureRequest = new paypal.orders.OrdersCaptureRequest(orderID);
+    captureRequest.requestBody({}); 
 
-    // mandar el resultado a wordpress
+    // Ejecuta la petición
+    const captureResponse = await client.execute(captureRequest);
+    const result = captureResponse.result;
 
-    // Extraer información del comprador
-    const customerInfo = {
-      name: result.payer?.name?.given_name + " " + result.payer?.name?.surname,
-      email: result.payer?.email_address,
-      payerId: result.payer?.payer_id,
-      address: result.purchase_units[0]?.shipping?.address
-    };
-
-    // Log del comprador para debugging
-    console.log("Customer info:", customerInfo);
-    
-    // Devolver la respuesta completa para que el frontend pueda mostrar detalles
-    return NextResponse.json({ ...result, customerInfo });
-  } catch (error) {
-    console.error("Error capturing order:", error);
-    
-    if (error instanceof ApiError) {
-      const errors = error.result;
-      console.error("PayPal API Error:", errors);
-      return NextResponse.json({ error: errors }, { status: 500 });
+    // Devuelve al frontend el resultado y la info de cliente
+    return NextResponse.json({ result });
+  } 
+  catch (err) 
+  {
+    // Si viene de PayPal API
+    if (err.statusCode && err.message) {
+      return NextResponse.json(
+        { error: err.message, details: err },
+        { status: err.statusCode }
+      );
     }
-    
     return NextResponse.json(
-      { error: "Error al capturar la orden de PayPal" },
+      { error: "Error interno al capturar la orden" },
       { status: 500 }
     );
   }
-} 
+}

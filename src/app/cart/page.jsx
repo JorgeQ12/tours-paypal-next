@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Trash2 } from "lucide-react"
 
 export default function CartPage() {
+  const WEB_URL = process.env.NEXT_PUBLIC_WEB_URL;
+
   const router = useRouter()
   const [cartItems, setCartItems] = useState([])
   const [isClient, setIsClient] = useState(false)
@@ -43,7 +45,7 @@ export default function CartPage() {
 
   // Continue shopping
   const continueShopping = () => {
-    router.push("/")
+    router.push(WEB_URL)
   }
 
   // Proceed to checkout
@@ -114,12 +116,6 @@ export default function CartPage() {
               </div>
             </CardFooter>
           </Card>
-
-          <div className="text-center">
-            <Button variant="link" onClick={continueShopping}>
-              Continuar comprando
-            </Button>
-          </div>
         </div>
       )}
     </div>
