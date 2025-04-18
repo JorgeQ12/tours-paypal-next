@@ -66,7 +66,7 @@ export default function SummaryPage() {
         setLoading(false);
       } catch (err) {
         console.error("Error leyendo token:", err);
-        router.push("/");
+        router.push(WEB_URL);
       }
     };
 
