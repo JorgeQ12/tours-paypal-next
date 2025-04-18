@@ -7,6 +7,8 @@ import { useState, useEffect } from "react"
 import InvoiceModal from "@/components/InvoiceModal"
 
 export default function ConfirmationPage() {
+  const WEB_URL = process.env.NEXT_PUBLIC_WEB_URL;
+
   const router = useRouter()
   const [invoiceModalOpen, setInvoiceModalOpen] = useState(false)
   const [orderDetails, setOrderDetails] = useState(null)
@@ -23,7 +25,7 @@ export default function ConfirmationPage() {
 
   // Return to home
   const returnToHome = () => {
-    router.push("/")
+    router.push(WEB_URL)
   }
   
   // Recuperar los datos de la orden desde localStorage si existen
