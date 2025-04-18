@@ -1,7 +1,9 @@
-import SummaryPage from "@/app/summary/page"
+import SummaryPage from "./summary/page"
 
 export default function Home() {
   return (
-    <SummaryPage/>
+    <main className="container mx-auto py-8 px-4">
+      <SummaryPage />
+    </main>
   )
 }
