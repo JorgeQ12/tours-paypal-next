@@ -59,20 +59,12 @@ export async function POST(request) {
   }
   catch (err) 
   {
-    console.error("Error creando la orden:", err);
-
-    // Errores de PayPal
-    if (err.statusCode && err.message) {
-      return NextResponse.json(
-        { error: err.message, details: err },
-        { status: err.statusCode }
-      );
-    }
-
-    // Error genérico
+    console.error("Error creando orden:", err);
+    const status = err.statusCode || 500;
+    const mensaje = err.message || err.toString();
     return NextResponse.json(
-      { error: "Error al procesar la creación de la orden" },
-      { status: 500 }
+      { error: mensaje, stack: err.stack },
+      { status }
     );
   }
 }
