@@ -42,7 +42,11 @@ export default function CheckoutPage() {
     state:     "",
     postal:    ""
   });
-
+ 
+  useEffect(() => {
+    console.log("PayPal Client ID:", process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID);
+  }, []);
+  
   // Cambio genérico de inputs
   const handleInputChange = (e) => {
     const { id, value } = e.target;
